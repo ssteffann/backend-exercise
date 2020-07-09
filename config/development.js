@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 module.exports = {
-  env: 'test',
+  env: 'localhost',
 
   database: {
     /**
@@ -19,14 +19,22 @@ module.exports = {
    * More info: https://nodemailer.com
    */
   email: {
+    from: '<insert your email here>',
+    host: null,
     auth: {
-      user: 'mock',
+      user: null,
+      pass: null,
     },
   },
 
   /**
+   * Client URL used when sending emails.
+   */
+  clientUrl: '<insert client url here>',
+
+  /**
    * When this email is set, all requests will automatically authenticate using this email.
-   * Leave null for test environment.
+   * Useful for testing purposes.
    */
   userAutoAuthenticatedEmailForTests: null,
 };
