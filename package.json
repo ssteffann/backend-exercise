@@ -1,0 +1,37 @@
+{
+  "name": "converge-backend-exercise",
+  "version": "0.2.1",
+  "description": "Engineering exercise for full-stack candidates.",
+  "main": "main.js",
+  "keywords": [
+    "test",
+    "interview",
+    "exercise",
+    "full-stack",
+    "http-server"
+  ],
+  "author": "Gideon Farrell <gideon@converge.io>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node ./main.js",
+    "start:development": "cross-env NODE_ENV=development nodemon ./main.js",
+    "test": "nodemon --exec 'cross-env NODE_ENV=test mocha ./src/**/*.test.js --exit || exit 1'",
+    "mongod": "run-rs -v 4.0.0 --shell"
+  },
+  "dependencies": {
+    "cross-env": "7.0.2",
+    "bcrypt": "5.0.0",
+    "cors": "2.8.5",
+    "express": "4.17.1",
+    "mongoose": "5.9.22",
+    "nodemailer": "6.4.10",
+    "helmet": "3.23.3"
+  },
+  "devDependencies": {
+    "eslint": "^3.10.2",
+    "prettier": "^2.0.5",
+    "mocha": "^8.0.1",
+    "node-mocks-http": "^1.8.1",
+    "nodemon": "^2.0.4"
+  }
+}
