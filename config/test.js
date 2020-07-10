@@ -14,7 +14,7 @@ module.exports = {
 
   /**
    * Configuration to allow email sending used on:
-   * backend/src/services/shared/email/emailSender.js
+   * /src/services/email-sender.js
    *
    * More info: https://nodemailer.com
    */

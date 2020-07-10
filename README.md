@@ -1,31 +1,39 @@
-# Backend take-home exercise for Converge
+# Installation
 
-The purpose of this exercise is to test your ability to build a basic data
-ingestion server in node.js.
+To run this project you need to have Node installed.
 
-The Converge Platform ingests sensor data from our customers' sites (these
-could be construction sites, factories, oil wells, etc.), does some processing
-(including alerting users for anomalous values) on them, and stores them,
-allowing them to be served from an HTTP API. This exercise will see you building
-a basic version of the infrastructure required to do this.
+#### To install all the dependencies run in the root folder:
+ `npm install` or `yarn install`
+ 
 
-## Part one: Data ingestion
+#### To run the project:
+* `npm start` or `yarn start` - production environment
+* `npm start:development` or `yarn start:development` - development environment
+* `npm test` or `yarn test` -  run tests
 
-The most basic requirement of the application is that it can ingest the data
-from sensors, storing them in some form of persistent storage such that these
-data can later be queried and retrieved. You will be expected to justify your
-choice of persistent storage.
+## Project configuration
+To connect to your mongodb atlas set in `.env` your db credentials :
+* `DB_NAME`
+* `DB_USER`
+* `DB_PASSWORD`
 
-Sensors will send data over HTTP, by making a request to `PUT /data`, with the
+If you need to connect to other mongodb database change file for desired environment from `/config/<environmnet>.js` 
+
+To have a working email service change file for desired environment from `/config/<environmnet>.js` : `email:`
+
+By default email service is using test credentials from `ethereal.email`, 
+when an email is sent in `console.log` a preview link will be shown
+
+## API
+
+#### Endpoint `PUT /sensor-data` insert new sensor data, with the
 following request body:
 
     {
         sensorId: string,
-        time:     int,
-        value:    float,
+        time:     number,
+        value:    number,
     }
-
-This endpoint should exhibit the following behaviour:
 
 * Return error 400 if the packet does not contain `sensorId`;
 * Return error 400 if the packet does not contain `time`;
@@ -33,43 +41,38 @@ This endpoint should exhibit the following behaviour:
   be unique;
 * Return 204 if the packet structure is valid, and the packet was successfully
   stored in the persistent storage.
+* If sensor value is above or below the defined threshold for this sensor id, an email warning will be sent
 
-## Part two: retrieving data
+#### Endpoint `DELETE /sensor-data` deletes all data related to a sensor, required query params:
 
-For these data to be useful, a client (e.g. a web app) must be able to query and
-retrieve them. You should create an endpoint which allows a client to retrieve
-data from a sensor. The endpoint should return suitable status codes, and the
-body of the request should be returned as JSON. An example of a suitable
-endpoint would be:
+        sensorId: string,
 
-    GET /data
 
-With parameters:
+#### Endpoint `GET /sensor-data` returns all sensor data filtered my query params:
+        sensorId: string -- filter by sensorId
+        until: number -- filter by time that is until
+        since: number -- filter by time since
+        at: number -- filter by time at
+        
+* Returns an array of sensor data;
 
-* `sensorId`: the sensor id for which to query data;
-* `since`: a lower bound on the time of the data;
-* `until`: an upper bound on the time of the data.
+#### Endpoint `POST /threshold` insert new threshold, with the following request body:
+     {
+        sensorId: string,
+        minValue: number,
+        maxValue: number,
+        email: string, -- where to send an alert when sensorData is above or below the defined values
+     }
 
-## Part three: threshold alerts
+#### Endpoint `PUT /threshold/:id` update threshold (id - threshold id different from sensorId), with the following request body:
+     {
+        sensorId: string,
+        minValue: number,
+        maxValue: number,
+        email: string, -- where to send an alert when sensorData is above or below the defined values
+     }
 
-Often, customers want to know if something is wrong, and therefore your
-application should have the ability to configure thresholds for individual
-sensors which can send a message (e.g. via email or SMS) when that threshold is
-tripped. For example, if the pressure on a fuel tank is too high it could
-explode, or if a pipe is too cold it could burst.
+#### Endpoint `DELETE /threshold/:id` delete threshold (id - threshold id different from sensorId);
 
-## Requirements
 
-The solution should be made available to us as a git repository (whether hosted
-or merely in an archive is up to you). It should be installable and runnable
-using the basic `npm` commands `npm install` and `npm start`.
-
-## Included files
-
-1. README.md (this file)
-3. package.json
-
-## Questions etc.
-
-I am always happy to answer any questions you may have. Please email me at
-<gideon@converge.io> if you need anything clarified.
+#### Endpoint `GET /threshold` returns a list of thresholds;    

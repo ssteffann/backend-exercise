@@ -13,23 +13,19 @@ module.exports = {
 
   /**
    * Configuration to allow email sending used on:
-   * backend/src/services/shared/email/emailSender.js
+   * /src/services/email-sender.js
    *
    * More info: https://nodemailer.com
    */
   email: {
-    from: '<insert your email here>',
-    host: null,
+    from: '"Example warning 👻" <foo@example.com>', // sender address,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
     auth: {
-      user: null,
-      pass: null,
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASSWORD,
     },
   },
-
-  /**
-   * Client URL used when sending emails.
-   */
-  clientUrl: '<insert client url here>',
 
   /**
    * When this email is set, all requests will automatically authenticate using this email.

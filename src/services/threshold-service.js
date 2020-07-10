@@ -1,21 +1,33 @@
 const ThresholdRepository = require('../database/repositories/threshold-repository');
 const ValidationError = require('../errors/validation-error');
-
+const EmailSender = require('./email-sender');
 /**
  * Handles Sensor operations
  */
- class ThresholdService {
+class ThresholdService {
+  constructor() {
+    this.emailSender = new EmailSender();
+  }
   /**
    * Creates a Threshold.
    *
    * @param {Object} data
    */
   async create(data = {}) {
-    if (!data.sensorId || !data.minValue || !data.maxValue || !data.email)  {
-      throw new ValidationError('"sensorId", "minValue", "maxValue", "email" - are required fields');
+    if (
+      !data.sensorId ||
+      !data.minValue ||
+      !data.maxValue ||
+      !data.email
+    ) {
+      throw new ValidationError(
+        '"sensorId", "minValue", "maxValue", "email" - are required fields',
+      );
     }
 
-    const threshold = await this.findBySensorId(data.sensorId);
+    const threshold = await this.findBySensorId(
+      data.sensorId,
+    );
 
     if (threshold) {
       throw new ValidationError(
@@ -45,18 +57,30 @@ const ValidationError = require('../errors/validation-error');
    * @param {number} sensorValue
    */
   async checkSensorValue(sensorId, sensorValue) {
-    const threshold = await ThresholdRepository.findBySensorId(sensorId);
+    const threshold = await ThresholdRepository.findBySensorId(
+      sensorId,
+    );
 
-    if(!threshold) {
+    if (!threshold) {
       return;
     }
 
-    if(sensorValue < threshold.minValue) {
-      console.log(' ------> value is below min value', );
+    const email = {
+      to: threshold.email,
+      subject: 'Sensor Warning !!',
+      html: `<h1>Sensor Warning !!</h1> <h3>Sensor Id: ${sensorId} has value ${sensorValue}</h3>`,
+    };
+
+    if (sensorValue < threshold.minValue) {
+      email.html = `${email.html} <p>Sensor value is below your threshold : ${threshold.minValue}</p>`;
+
+      return this.emailSender.send(email);
     }
 
-    if(sensorValue > threshold.maxValue) {
-      console.log(' ------> value is above max value', );
+    if (sensorValue > threshold.maxValue) {
+      email.html = `${email.html} <p>Sensor value is above your threshold : ${threshold.maxValue}</p>`;
+
+      return this.emailSender.send(email);
     }
   }
 
@@ -85,6 +109,6 @@ const ValidationError = require('../errors/validation-error');
   async getAll() {
     return ThresholdRepository.find();
   }
-};
+}
 
 module.exports = new ThresholdService();
