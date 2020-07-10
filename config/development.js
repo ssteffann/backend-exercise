@@ -9,7 +9,6 @@ module.exports = {
      * See https://mongoosejs.com/docs/index.html
      */
     connection: `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.rpe3c.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
-    transactions: false,
   },
 
   /**

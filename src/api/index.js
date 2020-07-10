@@ -20,4 +20,12 @@ app.use(databaseMiddleware);
 // to JSON
 app.use(bodyParser.json());
 
+// Configure the Entity routes
+const routes = express.Router();
+require('./sensor')(routes);
+require('./threshold')(routes);
+
+// Add the routes to the /api endpoint
+app.use('/', routes);
+
 module.exports = app;

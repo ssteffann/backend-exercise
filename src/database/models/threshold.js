@@ -12,14 +12,18 @@ const ThresholdSchema = new Schema(
       type: String,
       ref: 'sensor',
     },
-    min_value: {
+    minValue: {
       type: Number,
       required: true,
     },
-    max_value: {
+    maxValue: {
       type: Number,
       required: true,
     },
+    email: {
+      type: String,
+      required: true
+    }
   },
 );
 
